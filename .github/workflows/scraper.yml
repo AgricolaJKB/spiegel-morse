@@ -1,0 +1,21 @@
+name: Run scraper
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0/6 * * * *'
+    
+jobs:
+  scraper:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: node backend/scraper.js
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update headlines.json
+          branch: main
+          file_pattern: 'public/headlines.json'
