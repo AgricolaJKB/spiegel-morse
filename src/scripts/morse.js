@@ -56,7 +56,7 @@ const MAPPING = {
   '"': ".-..-.",
   $: "...-..-",
   "@": ".--.-.",
-  " ": "/",
+  " ": " ",
 };
 
 export const encodeCharacter = (character) => {

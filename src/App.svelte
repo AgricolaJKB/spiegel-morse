@@ -4,28 +4,38 @@
 
   const text = "Das ist ein Testsatz. Bitte testen.";
   const encodedText = encodeString(text);
+  const morseCharacters = [...encodedText];
+
+  let cursor = -1;
 
   const handleClick = () => {
-    const morseCharacters = [...encodedText];
-    console.log(morseCharacters);
+    cursor = -1;
     morseCharacters.forEach((c, i) => {
       const timeout = morseCharacters
         .slice(0, i + 1)
-        .reduce((a, c) => (c === "." ? a + 150 : a + 250), 0);
-      console.log(timeout);
+        .reduce((a, c) => (c === "." ? a + 100 : a + 250), 0);
       setTimeout(() => {
         sonify(c);
+        cursor = i;
       }, timeout);
     });
   };
+  console.log(encodedText);
 </script>
 
 <main>
   <p>{text}</p>
 
-  <p>
-    {encodedText}
+  <p class="morse">
+    <span style="color: red">
+      {encodedText.slice(0, cursor + 1)}
+    </span>
+
+    <span style="color: green">
+      {encodedText.slice(cursor + 1, encodedText.length + 1)}
+    </span>
   </p>
+
   <button on:click={handleClick}>Ton</button>
 </main>
 
@@ -43,5 +53,9 @@
   }
   .read-the-docs {
     color: #888;
+  }
+
+  .morse {
+    font-size: 1.2rem;
   }
 </style>
