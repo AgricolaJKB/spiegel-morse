@@ -9,9 +9,13 @@
     const morseCharacters = [...encodedText];
     console.log(morseCharacters);
     morseCharacters.forEach((c, i) => {
+      const timeout = morseCharacters
+        .slice(0, i + 1)
+        .reduce((a, c) => (c === "." ? a + 75 : a + 150), 0);
+      console.log(timeout);
       setTimeout(() => {
         sonify(c);
-      }, i * 200);
+      }, timeout);
     });
   };
 </script>
