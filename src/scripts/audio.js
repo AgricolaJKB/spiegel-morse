@@ -15,15 +15,6 @@ const synth = new Tone.Synth({
   },
 }).toDestination();
 
-export const sonify = (character, timeout) => {
-  const now = Tone.now();
-  if (character === ".") {
-    synth.triggerAttackRelease("F5", DOT, now + timeout);
-  } else if (character === "-") {
-    synth.triggerAttackRelease("F5", 3 * DOT, now + timeout);
-  }
-};
-
 export const addTimeouts = (morseCharacters) => {
   return morseCharacters.map((c, i) => {
     const timeout = morseCharacters.slice(0, i).reduce((acc, cur) => {
@@ -32,31 +23,32 @@ export const addTimeouts = (morseCharacters) => {
       } else if (cur === "-") {
         return acc + 4 * DOT;
       } else if (cur === "/") {
-        return acc + 4 * DOT;
+        return acc + 7 * DOT;
       } else {
         return acc + 3 * DOT;
       }
     }, 0);
-    return { character: c, time: timeout };
+    return { character: c, time: timeout, index: i };
   });
+};
+
+export const sonify = (character, timeout, now = Tone.now()) => {
+  if (character === ".") {
+    synth.triggerAttackRelease("F5", DOT, now + timeout);
+  } else if (character === "-") {
+    synth.triggerAttackRelease("F5", 3 * DOT, now + timeout);
+  }
 };
 
 export const createPart = (timeouts, setCursor, setFinished) => {
   const now = Tone.now();
-  const part = new Tone.Part(
-    (time, value) => {
-      if (value.character === ".") {
-        synth.triggerAttackRelease("F5", DOT, now + time);
-      } else if (value.character === "-") {
-        synth.triggerAttackRelease("F5", 3 * DOT, now + time);
-      }
-      setCursor(value.index);
-      if (value.index === timeouts.length - 1) {
-        setFinished();
-      }
-    },
-    timeouts.map((t, i) => ({ ...t, index: i }))
-  ).start(0);
+  const part = new Tone.Part((time, value) => {
+    sonify(value.character, time, now);
+    setCursor(value.index);
+    if (value.index === timeouts.length - 1) {
+      setFinished();
+    }
+  }, timeouts).start(0);
   return part;
 };
 

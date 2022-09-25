@@ -41,6 +41,7 @@
   };
 
   const handleRestart = () => {
+    finished = false;
     Tone.context.resume().then(() => {
       Tone.Transport.stop();
       part.stop();
