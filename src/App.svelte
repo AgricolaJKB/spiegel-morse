@@ -144,6 +144,27 @@
         url("/fonts/cutive/cutive-mono-v14-latin-regular.svg#CutiveMono")
         format("svg"); /* Legacy iOS */
   }
+  @font-face {
+    font-family: "Cutive Mono";
+    font-style: normal;
+    font-weight: 600;
+    src: url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.eot"); /* IE9 Compat Modes */
+    src: local(""),
+      url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.svg#CutiveMono")
+        format("svg"); /* Legacy iOS */
+  }
 
   .output {
     font-family: "Cutive Mono";
