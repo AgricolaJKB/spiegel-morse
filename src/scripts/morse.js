@@ -138,7 +138,6 @@ export const decodeCharacter = (tokenString) => {
 };
 
 export const encodeString = (string) => {
-  console.log(string);
   const lowerCaseCharacters = [...string.toLowerCase()];
   const filteredLowerCaseCharacters = lowerCaseCharacters.filter((c) =>
     Object.keys(MAPPING).includes(c)

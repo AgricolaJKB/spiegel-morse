@@ -1,6 +1,9 @@
 <script>
+  import Phrase from "./lib/Morse/Phrase.svelte";
+  import Info from "./assets/icons/Info.svelte";
   import { encodeString, decodeCharacter } from "./scripts/morse";
   import { addTimeouts, createPart } from "./scripts/audio";
+  import { tippy } from "svelte-tippy";
   import * as Tone from "tone";
 
   let headlines = [];
@@ -12,7 +15,7 @@
   // text
   let text = "";
   let visibleText = "";
-  let guessedCharacter = "";
+  let guessedCharacter = " ";
 
   // controls
   let playing = false;
@@ -49,7 +52,7 @@
   }
 
   $: if (headlines.length) {
-    text = headlines[0].title;
+    text = headlines.map((h) => h.title).join(" +++ ");
     encodedText = encodeString(text);
     morseArray = addTimeouts([...encodedText]);
     part = createPart(
@@ -62,7 +65,7 @@
   const fetchHeadlines = async () => {
     const res = await fetch(import.meta.env.BASE_URL + "headlines.json");
     const json = await res.json();
-    headlines = json;
+    headlines = json.slice(0, 5);
   };
   fetchHeadlines();
 
@@ -87,91 +90,92 @@
       Tone.Transport.start();
     });
   };
+  $: console.log(currentCharacterTokens);
 </script>
 
 <main>
-  <p class="output">
-    {#if !finished}
-      {visibleText.toUpperCase()}<span style="color: red"
-        >{guessedCharacter.toUpperCase()}</span
-      >
-    {:else}
-      {text}
-    {/if}
-  </p>
+  <a href="https://www.spiegel.de" style="height:2px">
+    <div class="header">
+      <h1 class="title sans">DER</h1>
+      <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
+      <h1 class="title sans">GEMORST</h1>
+    </div>
+  </a>
 
-  <p class="morse">
-    {#if !finished}
-      <span>
-        {currentWordTokensWithoutIncomplete}<span style="color: red"
-          >{currentCharacterTokens.replaceAll("/", "")}</span
-        >
-      </span>
-    {:else}
-      <span>
-        {morseArray.map((m) => m.character).join("")}
-      </span>
-    {/if}
-  </p>
+  <div class="content">
+    <p class="output">
+      {#if !finished}
+        <span>
+          <span>{visibleText.toUpperCase()}</span><span
+            style="color: red;margin-left: 0.05rem"
+          >
+            {guessedCharacter.toUpperCase()}
+          </span>
+        </span>
+      {:else}
+        {text.toUpperCase()}
+      {/if}
+    </p>
+
+    <div class="morse">
+      {#if !finished}
+        <span>
+          <Phrase phrase={currentWordTokensWithoutIncomplete} />
+          <span>
+            <Phrase
+              phrase={currentCharacterTokens.replaceAll("/", "")}
+              highlighted={true}
+            />
+          </span>
+        </span>
+      {:else}
+        <span>
+          <Phrase phrase={morseArray.map((m) => m.character).join("")} />
+        </span>
+      {/if}
+    </div>
+  </div>
 
   <div class="controls">
     {#if finished}
-      <button on:click={handleRestart}>{"Restart"}</button>
+      <button on:click={handleRestart} class="sans">{"Restart"}</button>
     {:else}
-      <button on:click={handleClick}>{!playing ? "Start" : "Pause"}</button>
+      <button on:click={handleClick} class="sans"
+        >{!playing ? "Start" : "Pause"}</button
+      >
     {/if}
   </div>
 </main>
 
 <style>
-  /* cutive-mono-regular - latin */
-  @font-face {
-    font-family: "Cutive Mono";
-    font-style: normal;
-    font-weight: 600;
-    src: url("/fonts/cutive/cutive-mono-v14-latin-regular.eot"); /* IE9 Compat Modes */
-    src: local(""),
-      url("/fonts/cutive/cutive-mono-v14-latin-regular.eot?#iefix")
-        format("embedded-opentype"),
-      /* IE6-IE8 */ url("/fonts/cutive/cutive-mono-v14-latin-regular.woff2")
-        format("woff2"),
-      /* Super Modern Browsers */
-        url("/fonts/cutive/cutive-mono-v14-latin-regular.woff") format("woff"),
-      /* Modern Browsers */
-        url("/fonts/cutive/cutive-mono-v14-latin-regular.ttf")
-        format("truetype"),
-      /* Safari, Android, iOS */
-        url("/fonts/cutive/cutive-mono-v14-latin-regular.svg#CutiveMono")
-        format("svg"); /* Legacy iOS */
+  main {
+    width: 550px;
+    max-width: 100%;
   }
-  @font-face {
-    font-family: "Cutive Mono";
-    font-style: normal;
-    font-weight: 600;
-    src: url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.eot"); /* IE9 Compat Modes */
-    src: local(""),
-      url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.eot?#iefix")
-        format("embedded-opentype"),
-      /* IE6-IE8 */
-        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.woff2")
-        format("woff2"),
-      /* Super Modern Browsers */
-        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.woff")
-        format("woff"),
-      /* Modern Browsers */
-        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.ttf")
-        format("truetype"),
-      /* Safari, Android, iOS */
-        url("/spiegel-morse/fonts/cutive/cutive-mono-v14-latin-regular.svg#CutiveMono")
-        format("svg"); /* Legacy iOS */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
+  .title {
+    font-size: 1.6rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0.75rem 0;
+  }
+  .content {
+    margin: 3rem 0;
+  }
   .output {
     font-family: "Cutive Mono";
+    margin-bottom: 1.5rem;
   }
   .morse {
-    font-size: 1.2rem;
-    margin: 2rem 0 2.5rem 0;
+    min-height: 1.5rem;
+  }
+  p {
+    /* min-height: 1.2rem; */
+    max-width: 550px;
+    margin: 1rem 0;
   }
   .controls {
     margin: 0 auto;
@@ -180,9 +184,5 @@
   }
   .controls:first-child {
     margin-right: 2rem;
-  }
-  p {
-    min-height: 1.2rem;
-    max-width: 600px;
   }
 </style>
