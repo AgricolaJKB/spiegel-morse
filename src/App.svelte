@@ -25,7 +25,6 @@
   fetchHeadlines();
 
   const handleClick = () => {
-    console.log(playing, "playing");
     Tone.context.resume().then(() => {
       if (playing) {
         Tone.Transport.pause();
@@ -48,7 +47,7 @@
     </span>
   </p>
 
-  <button on:click={handleClick}>{playing ? "Start" : "Pause"}</button>
+  <button on:click={handleClick}>{!playing ? "Start" : "Pause"}</button>
 </main>
 
 <style>
