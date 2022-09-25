@@ -2,7 +2,7 @@ name: Run scraper
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: "*/20 * * * *"
+    - cron: "4 */2 * * *"
 permissions:
   contents: write
 jobs:
