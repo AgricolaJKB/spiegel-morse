@@ -1,10 +1,10 @@
 name: Run scraper
-
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: "*/20 * * * *"
-
+permissions:
+  contents: write
 jobs:
   scraper:
     runs-on: ubuntu-latest
