@@ -19,6 +19,7 @@
 
 <style>
   .container {
+    width: max-content;
     height: 2px;
     line-height: 2px;
     font-size: 2px;

@@ -149,18 +149,24 @@
 
 <style>
   main {
-    width: 550px;
     max-width: 100%;
   }
   .header {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
   }
   .title {
     font-size: 1.6rem;
+    line-height: 1rem;
     color: rgba(255, 255, 255, 0.8);
     margin: 0.75rem 0;
+  }
+  @media (max-width: 450px) {
+    .title {
+      font-size: 1.4rem;
+    }
   }
   .content {
     margin: 3rem 0;
