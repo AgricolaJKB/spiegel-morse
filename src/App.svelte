@@ -9,12 +9,17 @@
   let part;
   let cursor = -1;
   let playing = false;
+  let finished = false;
 
   $: if (headlines.length) {
     text = headlines[0].title;
     encodedText = encodeString(text);
     const morseArray = addTimeouts([...encodedText]);
-    part = createPart(morseArray, (c) => (cursor = c));
+    part = createPart(
+      morseArray,
+      (c) => (cursor = c),
+      () => (finished = true)
+    );
   }
 
   const fetchHeadlines = async () => {
@@ -34,6 +39,15 @@
       playing = !playing;
     });
   };
+
+  const handleRestart = () => {
+    Tone.context.resume().then(() => {
+      Tone.Transport.stop();
+      part.stop();
+      part.start(0);
+      Tone.Transport.start();
+    });
+  };
 </script>
 
 <main>
@@ -47,12 +61,26 @@
     </span>
   </p>
 
-  <button on:click={handleClick}>{!playing ? "Start" : "Pause"}</button>
+  <div class="controls">
+    {#if finished}
+      <button on:click={handleRestart}>{"Restart"}</button>
+    {:else}
+      <button on:click={handleClick}>{!playing ? "Start" : "Pause"}</button>
+    {/if}
+  </div>
 </main>
 
 <style>
   .morse {
     font-size: 1.2rem;
+  }
+  .controls {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  .controls:first-child {
+    margin-right: 2rem;
   }
   p {
     max-width: 600px;

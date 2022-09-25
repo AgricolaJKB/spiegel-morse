@@ -56,7 +56,7 @@ const MAPPING = {
   '"': ".-..-.",
   $: "...-..-",
   "@": ".--.-.",
-  " ": " ",
+  " ": "/",
 };
 
 const REVERSE_MAPPING = {
@@ -114,7 +114,7 @@ const REVERSE_MAPPING = {
   ".-..-.": '"',
   "...-..-": "$",
   ".--.-.": "@",
-  " ": " ",
+  "/": " ",
 };
 
 export const encodeCharacter = (character) => {
