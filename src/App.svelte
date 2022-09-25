@@ -9,14 +9,18 @@
   let part;
   let cursor = -1;
 
+  // text
+  let text = "";
+  let visibleText = "";
+  let guessedCharacter = "";
+
   // controls
   let playing = false;
-  let finished = false;
+  let finished =
+    text.length === visibleText.length + 1 &&
+    text.slice(-1)[0] === guessedCharacter;
 
-  // current word
-  let text = "";
-  let word = "";
-  let guessedCharacter = "";
+  // tokens
   $: currentWordTokens = morseArray.length
     ? morseArray
         .slice(0, cursor + 1)
@@ -31,23 +35,22 @@
     .slice(0, -1)
     .join(" ");
   $: currentCharacterTokens = currentWordTokens?.split(" ").slice(-1)[0] ?? "";
-  $: console.log(currentCharacterTokens, currentWordTokens);
+
+  // update visibleText/guessedCharacter if currentCharacterTokens changes
   $: {
     if (currentCharacterTokens) {
       const decoded = decodeCharacter(currentCharacterTokens);
-      console.log(currentCharacterTokens);
       if (decoded) {
         guessedCharacter = decoded;
       }
     } else {
-      word += guessedCharacter;
-      // guessedCharacter = "";
+      visibleText += guessedCharacter;
     }
   }
 
   $: if (headlines.length) {
     text = headlines[0].title;
-    encodedText = encodeString(headlines[0].title);
+    encodedText = encodeString(text);
     morseArray = addTimeouts([...encodedText]);
     part = createPart(
       morseArray,
@@ -76,6 +79,7 @@
 
   const handleRestart = () => {
     finished = false;
+    visibleText = "";
     Tone.context.resume().then(() => {
       Tone.Transport.stop();
       part.stop();
@@ -87,17 +91,27 @@
 
 <main>
   <p class="output">
-    {word.toUpperCase()}<span style="color: red"
-      >{guessedCharacter.toUpperCase()}</span
-    >
+    {#if !finished}
+      {visibleText.toUpperCase()}<span style="color: red"
+        >{guessedCharacter.toUpperCase()}</span
+      >
+    {:else}
+      {text}
+    {/if}
   </p>
 
   <p class="morse">
-    <span style="">
-      {currentWordTokensWithoutIncomplete}<span style="color: red"
-        >{currentCharacterTokens.replaceAll("/", "")}</span
-      >
-    </span>
+    {#if !finished}
+      <span>
+        {currentWordTokensWithoutIncomplete}<span style="color: red"
+          >{currentCharacterTokens.replaceAll("/", "")}</span
+        >
+      </span>
+    {:else}
+      <span>
+        {morseArray.map((m) => m.character).join("")}
+      </span>
+    {/if}
   </p>
 
   <div class="controls">
@@ -110,8 +124,29 @@
 </main>
 
 <style>
+  /* cutive-mono-regular - latin */
+  @font-face {
+    font-family: "Cutive Mono";
+    font-style: normal;
+    font-weight: 600;
+    src: url("/fonts/cutive/cutive-mono-v14-latin-regular.eot"); /* IE9 Compat Modes */
+    src: local(""),
+      url("/fonts/cutive/cutive-mono-v14-latin-regular.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */ url("/fonts/cutive/cutive-mono-v14-latin-regular.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("/fonts/cutive/cutive-mono-v14-latin-regular.woff") format("woff"),
+      /* Modern Browsers */
+        url("/fonts/cutive/cutive-mono-v14-latin-regular.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("/fonts/cutive/cutive-mono-v14-latin-regular.svg#CutiveMono")
+        format("svg"); /* Legacy iOS */
+  }
+
   .output {
-    font-family: "Courier";
+    font-family: "Cutive Mono";
   }
   .morse {
     font-size: 1.2rem;
@@ -126,7 +161,7 @@
     margin-right: 2rem;
   }
   p {
-    height: 1.2rem;
+    min-height: 1.2rem;
     max-width: 600px;
   }
 </style>
