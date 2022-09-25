@@ -59,6 +59,64 @@ const MAPPING = {
   " ": " ",
 };
 
+const REVERSE_MAPPING = {
+  "-----": "0",
+  ".----": "1",
+  "..---": "2",
+  "...--": "3",
+  "....-": "4",
+  ".....": "5",
+  "-....": "6",
+  "--...": "7",
+  "---..": "8",
+  "----.": "9",
+  ".-": "a",
+  "-...": "b",
+  "-.-.": "c",
+  "-..": "d",
+  ".": "e",
+  "..-.": "f",
+  "--.": "g",
+  "....": "h",
+  "..": "i",
+  ".---": "j",
+  "-.-": "k",
+  ".-..": "l",
+  "--": "m",
+  "-.": "n",
+  "---": "o",
+  ".--.": "p",
+  "--.-": "q",
+  ".-.": "r",
+  "...": "s",
+  "-": "t",
+  "..-": "u",
+  "...-": "v",
+  ".--": "w",
+  "-..-": "x",
+  "-.--": "y",
+  "--..": "z",
+  ".-.-.-": ".",
+  "--..--": ",",
+  "..--..": "?",
+  ".----.": "'",
+  "-.-.--": "!",
+  "-..-.": "/",
+  "-.--.": "(",
+  "-.--.-": ")",
+  ".-...": "&",
+  "---...": ":",
+  "-.-.-.": ";",
+  "-...-": "=",
+  ".-.-.": "+",
+  "-....-": "-",
+  "..--.-": "_",
+  ".-..-.": '"',
+  "...-..-": "$",
+  ".--.-.": "@",
+  " ": " ",
+};
+
 export const encodeCharacter = (character) => {
   if (MAPPING[character]) {
     return MAPPING[character];
@@ -68,6 +126,9 @@ export const encodeCharacter = (character) => {
 };
 
 export const encodeString = (string) => {
-  const lowerCaseString = string.toLowerCase();
-  return [...lowerCaseString].map((c) => encodeCharacter(c)).join(" ");
+  const lowerCaseCharacters = [...string.toLowerCase()];
+  const filteredLowerCaseCharacters = lowerCaseCharacters.filter((c) =>
+    Object.keys(MAPPING).includes(c)
+  );
+  return filteredLowerCaseCharacters.map((c) => encodeCharacter(c)).join(" ");
 };

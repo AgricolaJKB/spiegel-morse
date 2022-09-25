@@ -1,21 +1,38 @@
 <script>
   import { encodeString } from "./scripts/morse";
-  import { sonify, addTimeouts } from "./scripts/audio";
+  import { addTimeouts, createPart } from "./scripts/audio";
+  import * as Tone from "tone";
 
-  const text = "Das ist ein Testsatz. Bitte testen.";
-  const encodedText = encodeString(text);
-  const morseCharacters = [...encodedText];
-
+  let headlines = [];
+  let text = "";
+  let encodedText = "";
+  let part;
   let cursor = -1;
+  let playing = false;
+
+  $: if (headlines.length) {
+    text = headlines[0].title;
+    encodedText = encodeString(text);
+    const morseArray = addTimeouts([...encodedText]);
+    part = createPart(morseArray, (c) => (cursor = c));
+  }
+
+  const fetchHeadlines = async () => {
+    const res = await fetch(import.meta.env.BASE_URL + "headlines.json");
+    const json = await res.json();
+    headlines = json;
+  };
+  fetchHeadlines();
 
   const handleClick = () => {
-    cursor = -1;
-    const morseArray = addTimeouts(morseCharacters);
-    morseArray.forEach(([c, timeout], i) => {
-      sonify(c, timeout);
-      setTimeout(() => {
-        cursor = i;
-      }, timeout * 1000);
+    console.log(playing, "playing");
+    Tone.context.resume().then(() => {
+      if (playing) {
+        Tone.Transport.pause();
+      } else {
+        Tone.Transport.start();
+      }
+      playing = !playing;
     });
   };
 </script>
@@ -31,15 +48,14 @@
     </span>
   </p>
 
-  <button on:click={handleClick}>Ton</button>
+  <button on:click={handleClick}>{playing ? "Start" : "Pause"}</button>
 </main>
 
 <style>
-  .read-the-docs {
-    color: #888;
-  }
-
   .morse {
     font-size: 1.2rem;
+  }
+  p {
+    max-width: 600px;
   }
 </style>

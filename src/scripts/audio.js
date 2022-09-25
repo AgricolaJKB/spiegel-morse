@@ -35,6 +35,26 @@ export const addTimeouts = (morseCharacters) => {
         return acc + 7 * DOT;
       }
     }, 0);
-    return [c, timeout];
+    return { character: c, time: timeout };
   });
 };
+
+export const createPart = (timeouts, setCursor) => {
+  const now = Tone.now();
+  const part = new Tone.Part(
+    (time, value) => {
+      // the value is an object which contains both the note and the velocity
+      // synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+      if (value.character === ".") {
+        synth.triggerAttackRelease("F5", DOT, now + time);
+      } else if (value.character === "-") {
+        synth.triggerAttackRelease("F5", 3 * DOT, now + time);
+      }
+      setCursor(value.index);
+    },
+    timeouts.map((t, i) => ({ ...t, index: i }))
+  ).start(0);
+  return part;
+};
+
+export default synth;
