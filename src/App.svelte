@@ -172,7 +172,7 @@
     margin: 3rem 0;
   }
   .output {
-    font-family: "Cutive Mono";
+    font-family: "Special Elite", "Cutive Mono", Courier;
     margin-bottom: 1.5rem;
   }
   .morse {
