@@ -1,6 +1,6 @@
 <script>
   import { encodeString } from "./scripts/morse";
-  import { sonify, addTimeouts, DOT } from "./scripts/audio";
+  import { sonify, addTimeouts } from "./scripts/audio";
 
   const text = "Das ist ein Testsatz. Bitte testen.";
   const encodedText = encodeString(text);
