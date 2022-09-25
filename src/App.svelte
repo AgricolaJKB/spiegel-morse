@@ -1,6 +1,6 @@
 <script>
   import { encodeString } from "./scripts/morse";
-  import { sonify } from "./scripts/audio";
+  import { sonify, addTimeouts, DOT } from "./scripts/audio";
 
   const text = "Das ist ein Testsatz. Bitte testen.";
   const encodedText = encodeString(text);
@@ -10,14 +10,12 @@
 
   const handleClick = () => {
     cursor = -1;
-    morseCharacters.forEach((c, i) => {
-      const timeout = morseCharacters
-        .slice(0, i + 1)
-        .reduce((a, c) => (c === "." ? a + 100 : a + 250), 0);
+    const morseArray = addTimeouts(morseCharacters);
+    morseArray.forEach(([c, timeout], i) => {
+      sonify(c, timeout);
       setTimeout(() => {
-        sonify(c);
         cursor = i;
-      }, timeout);
+      }, timeout * 1000);
     });
   };
   console.log(encodedText);
