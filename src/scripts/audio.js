@@ -1,6 +1,6 @@
 import * as Tone from "tone";
 
-export const DOT = 0.035;
+export const DOT = 0.045;
 
 //create a synth and connect it to the main output (your speakers)
 const synth = new Tone.Synth({
@@ -26,13 +26,13 @@ export const sonify = (character, timeout) => {
 
 export const addTimeouts = (morseCharacters) => {
   return morseCharacters.map((c, i) => {
-    const timeout = morseCharacters.slice(0, i).reduce((a, ch) => {
-      if (ch === ".") {
-        return a + 2 * DOT;
-      } else if (ch === "-") {
-        return a + 4 * DOT;
+    const timeout = morseCharacters.slice(0, i).reduce((acc, cur) => {
+      if (cur === ".") {
+        return acc + 2 * DOT;
+      } else if (cur === "-") {
+        return acc + 4 * DOT;
       } else {
-        return a + 7 * DOT;
+        return acc + 7 * DOT;
       }
     }, 0);
     return [c, timeout];
