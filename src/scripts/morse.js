@@ -26,6 +26,7 @@ const MAPPING = {
   x: "-..-",
   y: "-.--",
   z: "--..",
+  ß: "...--..",
   // numbers
   1: ".----",
   2: "..---",
@@ -59,7 +60,7 @@ const MAPPING = {
   " ": "/",
 };
 
-const REVERSE_MAPPING = {
+export const REVERSE_MAPPING = {
   "-----": "0",
   ".----": "1",
   "..---": "2",
@@ -115,6 +116,7 @@ const REVERSE_MAPPING = {
   "...-..-": "$",
   ".--.-.": "@",
   "/": " ",
+  "...--..": "ß",
 };
 
 export const encodeCharacter = (character) => {
@@ -125,7 +127,12 @@ export const encodeCharacter = (character) => {
   }
 };
 
+export const decodeCharacter = (tokenString) => {
+  return REVERSE_MAPPING[tokenString];
+};
+
 export const encodeString = (string) => {
+  console.log(string);
   const lowerCaseCharacters = [...string.toLowerCase()];
   const filteredLowerCaseCharacters = lowerCaseCharacters.filter((c) =>
     Object.keys(MAPPING).includes(c)

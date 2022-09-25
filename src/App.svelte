@@ -1,20 +1,54 @@
 <script>
-  import { encodeString } from "./scripts/morse";
+  import { encodeString, decodeCharacter } from "./scripts/morse";
   import { addTimeouts, createPart } from "./scripts/audio";
   import * as Tone from "tone";
 
   let headlines = [];
-  let text = "";
   let encodedText = "";
+  let morseArray = [];
   let part;
   let cursor = -1;
+
+  // controls
   let playing = false;
   let finished = false;
 
+  // current word
+  let text = "";
+  let word = "";
+  let guessedCharacter = "";
+  $: currentWordTokens = morseArray.length
+    ? morseArray
+        .slice(0, cursor + 1)
+        .map((arr) => arr.character)
+        .join("")
+        .split(" / ")
+        .filter((c) => c !== "/")
+        .slice(-1)[0]
+    : "";
+  $: currentWordTokensWithoutIncomplete = currentWordTokens
+    ?.split(" ")
+    .slice(0, -1)
+    .join(" ");
+  $: currentCharacterTokens = currentWordTokens?.split(" ").slice(-1)[0] ?? "";
+  $: console.log(currentCharacterTokens, currentWordTokens);
+  $: {
+    if (currentCharacterTokens) {
+      const decoded = decodeCharacter(currentCharacterTokens);
+      console.log(currentCharacterTokens);
+      if (decoded) {
+        guessedCharacter = decoded;
+      }
+    } else {
+      word += guessedCharacter;
+      // guessedCharacter = "";
+    }
+  }
+
   $: if (headlines.length) {
     text = headlines[0].title;
-    encodedText = encodeString(text);
-    const morseArray = addTimeouts([...encodedText]);
+    encodedText = encodeString(headlines[0].title);
+    morseArray = addTimeouts([...encodedText]);
     part = createPart(
       morseArray,
       (c) => (cursor = c),
@@ -52,13 +86,17 @@
 </script>
 
 <main>
-  <p>{text}</p>
+  <p class="output">
+    {word.toUpperCase()}<span style="color: red"
+      >{guessedCharacter.toUpperCase()}</span
+    >
+  </p>
 
   <p class="morse">
-    <span style="color: red">
-      {encodedText.slice(0, cursor + 1)}
-    </span><span style="color: green">
-      {encodedText.slice(cursor + 1, encodedText.length + 1)}
+    <span style="">
+      {currentWordTokensWithoutIncomplete}<span style="color: red"
+        >{currentCharacterTokens.replaceAll("/", "")}</span
+      >
     </span>
   </p>
 
@@ -72,8 +110,12 @@
 </main>
 
 <style>
+  .output {
+    font-family: "Courier";
+  }
   .morse {
     font-size: 1.2rem;
+    margin: 2rem 0 2.5rem 0;
   }
   .controls {
     margin: 0 auto;
@@ -84,6 +126,7 @@
     margin-right: 2rem;
   }
   p {
+    height: 1.2rem;
     max-width: 600px;
   }
 </style>
