@@ -20,7 +20,7 @@
   let finished = false;
   $: if (text || visibleText || guessedCharacter) {
     finished =
-      text.length === visibleText.length + 1 &&
+      text.length === visibleText.trim().length + 1 &&
       text.slice(-1)[0] === guessedCharacter;
   }
 
@@ -49,7 +49,6 @@
       }
     } else {
       visibleText += guessedCharacter;
-      visibleText = visibleText.trim();
     }
   }
 
@@ -89,16 +88,6 @@
       Tone.Transport.start();
     });
   };
-  $: console.log(
-    text,
-    `XX${visibleText}XX`,
-    guessedCharacter,
-    text.length,
-    visibleText.length,
-    text.trim().length === visibleText.trim().length + 1 &&
-      text.slice(-1)[0] === guessedCharacter,
-    finished
-  );
 </script>
 
 <main>
