@@ -40,14 +40,11 @@ export const sonify = (character, timeout, now = Tone.now()) => {
   }
 };
 
-export const createPart = (timeouts, setCursor, setFinished) => {
+export const createPart = (timeouts, setCursor) => {
   const now = Tone.now();
   const part = new Tone.Part((time, value) => {
     sonify(value.character, time, now);
     setCursor(value.index);
-    if (value.index === timeouts.length - 1) {
-      setFinished();
-    }
   }, timeouts).start(0);
   return part;
 };

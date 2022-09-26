@@ -1,9 +1,7 @@
 <script>
   import Phrase from "./lib/Morse/Phrase.svelte";
-  import Info from "./assets/icons/Info.svelte";
   import { encodeString, decodeCharacter } from "./scripts/morse";
   import { addTimeouts, createPart } from "./scripts/audio";
-  import { tippy } from "svelte-tippy";
   import * as Tone from "tone";
 
   let headlines = [];
@@ -51,23 +49,20 @@
     }
   }
 
-  $: if (headlines.length) {
-    text = headlines.map((h) => h.title).join(" +++ ");
-    encodedText = encodeString(text);
-    morseArray = addTimeouts([...encodedText]);
-    part = createPart(
-      morseArray,
-      (c) => (cursor = c),
-      () => (finished = true)
-    );
-  }
-
+  // load and set data
   const fetchHeadlines = async () => {
     const res = await fetch(import.meta.env.BASE_URL + "headlines.json");
     const json = await res.json();
     headlines = json.slice(0, 5);
   };
   fetchHeadlines();
+
+  $: if (headlines.length) {
+    text = headlines.map((h) => h.title).join(" +++ ");
+    encodedText = encodeString(text);
+    morseArray = addTimeouts([...encodedText]);
+    part = createPart(morseArray, (c) => (cursor = c));
+  }
 
   const handleClick = () => {
     Tone.context.resume().then(() => {
