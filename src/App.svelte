@@ -195,8 +195,16 @@
     margin-right: 2rem;
   }
   .footer {
-    margin-top: 5rem;
-    font-size: 11pt;
+    margin-top: 8rem;
+    font-size: 10pt;
     text-align: center;
+  }
+  
+  .footer a {
+    color: inherit;
+  }
+  .footer a:hover {
+    color: inherit;
+    text-decoration: underline;
   }
 </style>
