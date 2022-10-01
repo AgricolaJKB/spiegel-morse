@@ -142,6 +142,12 @@
       >
     {/if}
   </div>
+    
+  <div class="footer">
+    <a href="https://github.com/AgricolaJKB/spiegel-morse" target="_blank">Source code</a> | 
+    Created by <a href="https://twitter.com/_Jak_Bar" target="_blank">Jakob Bauer</a> and 
+    <a href="https://twitter.com/koenigsdorff_s" target="_blank">Simon Koenigsdorff</a>
+  </div>
 </main>
 
 <style>
@@ -187,5 +193,10 @@
   }
   .controls:first-child {
     margin-right: 2rem;
+  }
+  .footer {
+    margin-top: 5rem;
+    font-size: 11pt;
+    text-align: center;
   }
 </style>
