@@ -6,6 +6,6 @@ In the 19th century, the first news agencies evolved around telegraphing news ar
 
 What if the headlines of our times were still delivered as Morse code?
 
-This web project regularly scrapes the the top headlines of one of Germany's major news websites, [Der Spiegel](https://www.spiegel.de), and displays them as if they were received on a wire.
+This web project regularly scrapes the top headlines of one of Germany's major news websites, [Der Spiegel](https://www.spiegel.de), and displays them as if they were received on a wire.
 
-_Powered by Svelte, Vite and Morse code._
+_Powered by [Svelte](https://svelte.dev), [Vite](https://vitejs.dev) and Morse code._
