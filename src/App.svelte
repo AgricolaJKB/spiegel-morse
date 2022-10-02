@@ -15,6 +15,12 @@
   let visibleText = "";
   let guessedCharacter = " ";
 
+  // header switch
+  let hovered = false;
+  const handleHeaderHovered = () => {
+    hovered = !hovered;
+  };
+
   // controls
   let playing = false;
   let finished = false;
@@ -92,9 +98,15 @@
 
 <main>
   <a href="https://www.spiegel.de" style="height:2px">
-    <div class="header">
+    <div class="header"
+    on:mouseenter={handleHeaderHovered}
+    on:mouseleave={handleHeaderHovered}>
       <h1 class="title sans">DER</h1>
-      <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
+      {#if !hovered}
+        <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
+      {:else}
+        <h1 class="title sans">SPIEGEL</h1>
+      {/if}
       <h1 class="title sans">GEMORST</h1>
     </div>
   </a>
@@ -157,7 +169,7 @@
   .header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     flex-wrap: wrap;
   }
   .title {
