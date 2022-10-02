@@ -3,6 +3,7 @@
   import { encodeString, decodeCharacter } from "./scripts/morse";
   import { addTimeouts, createPart } from "./scripts/audio";
   import * as Tone from "tone";
+  import { onMount } from 'svelte';
 
   let headlines = [];
   let encodedText = "";
@@ -21,6 +22,12 @@
     hovered = !hovered;
   };
 
+  let headerWidth;
+  let maxHeaderWidth;
+  onMount(() => {
+    maxHeaderWidth = headerWidth + 5;
+  });
+ 
   // controls
   let playing = false;
   let finished = false;
@@ -97,10 +104,12 @@
 </script>
 
 <main>
-  <a href="https://www.spiegel.de" style="height:2px">
+  <a href="https://www.spiegel.de" style="height:2px;">
     <div class="header"
     on:mouseenter={handleHeaderHovered}
-    on:mouseleave={handleHeaderHovered}>
+    on:mouseleave={handleHeaderHovered}
+    bind:clientWidth={headerWidth}
+    style="width:{maxHeaderWidth}px;">
       <h1 class="title sans">DER</h1>
       {#if !hovered}
         <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
@@ -165,6 +174,9 @@
 <style>
   main {
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .header {
     display: flex;
