@@ -1,4 +1,4 @@
-# Der SPIEGEL morst // The SPIEGEL in Morse code
+# Der SPIEGEL gemorst // The SPIEGEL in Morse code
 
 ### [>>> Website](https://agricolajkb.github.io/spiegel-morse)
 
