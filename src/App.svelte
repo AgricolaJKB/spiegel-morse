@@ -173,6 +173,7 @@
   }
   .content {
     margin: 3rem 0;
+    min-height: 40vh;
   }
   .output {
     font-family: "Special Elite", "Cutive Mono", Courier;
@@ -195,9 +196,11 @@
     margin-right: 2rem;
   }
   .footer {
-    margin-top: 8rem;
-    font-size: 10pt;
+    margin-top: 8vh;
+    font-size: 8pt;
     text-align: center;
+    text-transform: uppercase;
+    font-family: sans-serif;
   }
   
   .footer a {
