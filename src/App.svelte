@@ -1,7 +1,7 @@
 <script>
   import Phrase from "./lib/Morse/Phrase.svelte";
   import { encodeString, decodeCharacter } from "./scripts/morse";
-  import { addTimeouts, createPart } from "./scripts/audio";
+  import { changeSpeed, addTimeouts, createPart } from "./scripts/audio";
   import * as Tone from "tone";
   import { onMount } from 'svelte';
 
@@ -36,6 +36,8 @@
       text.length === visibleText.trim().length + 1 &&
       text.slice(-1)[0] === guessedCharacter;
   }
+  let speed;
+  $: changeSpeed(speed);
 
   // tokens
   $: currentWordTokens = morseArray.length
@@ -162,6 +164,12 @@
         >{!playing ? "Start" : "Pause"}</button
       >
     {/if}
+    <div id="slider">
+      <span class="sans">fast</span>
+      <input type="range" min=0.01 max=0.07 step=0.03 bind:value={speed} style="width:80px;margin-left:1rem;margin-right:1rem;">
+      <span class="sans">slow</span>
+    </div>
+    
   </div>
     
   <div class="footer">
@@ -219,6 +227,12 @@
   .controls:first-child {
     margin-right: 2rem;
   }
+  #slider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 2rem;
+  }
   .footer {
     margin-top: 8vh;
     font-size: 8pt;
@@ -226,7 +240,6 @@
     text-transform: uppercase;
     font-family: sans-serif;
   }
-  
   .footer a {
     color: inherit;
   }

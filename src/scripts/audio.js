@@ -1,6 +1,13 @@
 import * as Tone from "tone";
 
-export const DOT = 0.04;
+export let DOT = 0.04;
+
+//function to change DOT
+export const changeSpeed = (tempo) => {
+  if (typeof(tempo) === "number") {
+    DOT = tempo;
+  }   
+}
 
 //create a synth and connect it to the main output (your speakers)
 const synth = new Tone.Synth({
