@@ -3,7 +3,7 @@
   import { encodeString, decodeCharacter } from "./scripts/morse";
   import { changeSpeed, addTimeouts, createPart } from "./scripts/audio";
   import * as Tone from "tone";
-  import { onMount } from 'svelte';
+  import { onMount } from "svelte";
 
   let headlines = [];
   let encodedText = "";
@@ -27,7 +27,7 @@
   onMount(() => {
     maxHeaderWidth = headerWidth + 5;
   });
- 
+
   // controls
   let playing = false;
   let finished = false;
@@ -107,16 +107,18 @@
 
 <main>
   <a href="https://www.spiegel.de" style="height:2px;">
-    <div class="header"
-    on:mouseenter={handleHeaderHovered}
-    on:mouseleave={handleHeaderHovered}
-    bind:clientWidth={headerWidth}
-    style="width:{maxHeaderWidth}px;">
+    <div
+      class="header"
+      on:mouseenter={handleHeaderHovered}
+      on:mouseleave={handleHeaderHovered}
+      bind:clientWidth={headerWidth}
+      style="width:{maxHeaderWidth}px;"
+    >
       <h1 class="title sans">DER</h1>
       {#if !hovered}
         <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
       {:else}
-        <h1 class="title sans">SPIEGEL</h1>
+        <h1 class="title sans" style="color:red">&nbsp;SPIEGEL&nbsp;</h1>
       {/if}
       <h1 class="title sans">GEMORST</h1>
     </div>
@@ -166,16 +168,28 @@
     {/if}
     <div id="slider">
       <span class="sans">fast</span>
-      <input type="range" min=0.01 max=0.07 step=0.03 bind:value={speed} style="width:80px;margin-left:1rem;margin-right:1rem;">
+      <input
+        type="range"
+        min="0.01"
+        max="0.07"
+        step="0.03"
+        bind:value={speed}
+        style="width:80px;margin-left:1rem;margin-right:1rem;"
+      />
       <span class="sans">slow</span>
     </div>
-    
   </div>
-    
+
   <div class="footer">
-    <a href="https://github.com/AgricolaJKB/spiegel-morse" target="_blank">Source code</a> | 
-    Created by <a href="https://twitter.com/_Jak_Bar" target="_blank">Jakob Bauer</a> and 
-    <a href="https://twitter.com/koenigsdorff_s" target="_blank">Simon Koenigsdorff</a>
+    <a href="https://github.com/AgricolaJKB/spiegel-morse" target="_blank"
+      >Source code</a
+    >
+    | Created by
+    <a href="https://twitter.com/_Jak_Bar" target="_blank">Jakob Bauer</a>
+    and
+    <a href="https://twitter.com/koenigsdorff_s" target="_blank"
+      >Simon Koenigsdorff</a
+    >
   </div>
 </main>
 
@@ -189,7 +203,7 @@
   .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap;
   }
   .title {
@@ -206,6 +220,9 @@
   .content {
     margin: 3rem 0;
     min-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .output {
     font-family: "Special Elite", "Cutive Mono", Courier;
