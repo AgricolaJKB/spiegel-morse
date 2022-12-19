@@ -33,7 +33,7 @@
   let finished = false;
   $: if (text || visibleText || guessedCharacter) {
     finished =
-      text.length === visibleText.trim().length + 1 &&
+      text.trim().length === visibleText.trim().length + 1 &&
       text.slice(-1)[0] === guessedCharacter;
   }
   let speed;
@@ -76,7 +76,11 @@
   fetchHeadlines();
 
   $: if (headlines.length) {
-    text = headlines.map((h) => h.title).join(" +++ ");
+    text = headlines
+      .map((h) => h.title)
+      .join(" +++ ")
+      .replaceAll("»", "")
+      .replaceAll("«", "");
     encodedText = encodeString(text);
     morseArray = addTimeouts([...encodedText]);
     part = createPart(morseArray, (c) => (cursor = c));
@@ -195,7 +199,8 @@
 
 <style>
   main {
-    max-width: 100%;
+    width: 100%;
+    max-width: 550px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -226,6 +231,7 @@
   }
   .output {
     font-family: "Special Elite", "Cutive Mono", Courier;
+    margin: 0 auto;
     margin-bottom: 1.5rem;
   }
   .morse {
