@@ -5,7 +5,7 @@
   const handleHeaderHovered = () => (headerHovered = !headerHovered);
 </script>
 
-<a href="https://www.spiegel.de" style="height:2px;">
+<a href="https://www.spiegel.de">
   <div
     class="header"
     on:mouseenter={handleHeaderHovered}
