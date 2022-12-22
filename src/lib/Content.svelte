@@ -49,7 +49,7 @@
 <style>
   .content {
     margin: 3rem 0;
-    min-height: 40vh;
+    min-height: calc(100vh - 30rem);
     display: flex;
     flex-direction: column;
     justify-content: center;
