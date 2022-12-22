@@ -1,11 +1,13 @@
 <script>
-  import Phrase from "./lib/Morse/Phrase.svelte";
+  import Header from "./lib/Header.svelte";
+  import Controls from "./lib/Controls.svelte";
+  import Footer from "./lib/Footer.svelte";
+  import Content from "./lib/Content.svelte";
   import { encodeString, decodeCharacter } from "./scripts/morse";
-  import { changeSpeed, addTimeouts, createPart } from "./scripts/audio";
+  import { addTimeouts, createPart } from "./scripts/audio";
+  import { getData } from "./scripts/data";
   import * as Tone from "tone";
-  import { onMount } from "svelte";
 
-  let headlines = [];
   let encodedText = "";
   let morseArray = [];
   let part;
@@ -16,18 +18,6 @@
   let visibleText = "";
   let guessedCharacter = " ";
 
-  // header switch
-  let hovered = false;
-  const handleHeaderHovered = () => {
-    hovered = !hovered;
-  };
-
-  let headerWidth;
-  let maxHeaderWidth;
-  onMount(() => {
-    maxHeaderWidth = headerWidth + 5;
-  });
-
   // controls
   let playing = false;
   let finished = false;
@@ -36,11 +26,19 @@
       text.trim().length === visibleText.trim().length + 1 &&
       text.slice(-1)[0] === guessedCharacter;
   }
-  let speed;
-  $: changeSpeed(speed);
 
-  // tokens
-  $: currentWordTokens = morseArray.length
+  // load and set data
+  const fetchHeadlines = async () => {
+    const headlines = await getData();
+    text = headlines.join(" +++ ");
+    encodedText = encodeString(text);
+    morseArray = addTimeouts([...encodedText]);
+    part = createPart(morseArray, (c) => (cursor = c));
+  };
+  fetchHeadlines();
+
+  // morsetokens
+  $: currentWordMorseTokens = morseArray.length
     ? morseArray
         .slice(0, cursor + 1)
         .map((arr) => arr.character)
@@ -49,16 +47,17 @@
         .filter((c) => c !== "/")
         .slice(-1)[0]
     : "";
-  $: currentWordTokensWithoutIncomplete = currentWordTokens
+  $: currentWordMorseTokensWithoutIncomplete = currentWordMorseTokens
     ?.split(" ")
     .slice(0, -1)
     .join(" ");
-  $: currentCharacterTokens = currentWordTokens?.split(" ").slice(-1)[0] ?? "";
+  $: currentCharacterMorseTokens =
+    currentWordMorseTokens?.split(" ").slice(-1)[0] ?? "";
 
-  // update visibleText/guessedCharacter if currentCharacterTokens changes
+  // update visibleText/guessedCharacter if currentCharacterMorseTokens changes
   $: {
-    if (currentCharacterTokens) {
-      const decoded = decodeCharacter(currentCharacterTokens);
+    if (currentCharacterMorseTokens) {
+      const decoded = decodeCharacter(currentCharacterMorseTokens);
       if (decoded) {
         guessedCharacter = decoded;
       }
@@ -67,26 +66,8 @@
     }
   }
 
-  // load and set data
-  const fetchHeadlines = async () => {
-    const res = await fetch(import.meta.env.BASE_URL + "headlines.json");
-    const json = await res.json();
-    headlines = json.slice(0, 5);
-  };
-  fetchHeadlines();
-
-  $: if (headlines.length) {
-    text = headlines
-      .map((h) => h.title)
-      .join(" +++ ")
-      .replaceAll("»", "")
-      .replaceAll("«", "");
-    encodedText = encodeString(text);
-    morseArray = addTimeouts([...encodedText]);
-    part = createPart(morseArray, (c) => (cursor = c));
-  }
-
-  const handleClick = () => {
+  // start/stop/restart button handlers
+  const handleStartStopClick = () => {
     Tone.context.resume().then(() => {
       if (playing) {
         Tone.Transport.pause();
@@ -110,91 +91,18 @@
 </script>
 
 <main>
-  <a href="https://www.spiegel.de" style="height:2px;">
-    <div
-      class="header"
-      on:mouseenter={handleHeaderHovered}
-      on:mouseleave={handleHeaderHovered}
-      bind:clientWidth={headerWidth}
-      style="width:{maxHeaderWidth}px;"
-    >
-      <h1 class="title sans">DER</h1>
-      {#if !hovered}
-        <Phrase phrase="SPIEGEL" encode={true} style="padding: 0 1rem;" />
-      {:else}
-        <h1 class="title sans" style="color:red">&nbsp;SPIEGEL&nbsp;</h1>
-      {/if}
-      <h1 class="title sans">GEMORST</h1>
-    </div>
-  </a>
-
-  <div class="content">
-    <p class="output">
-      {#if !finished}
-        <span>
-          <span>{visibleText.toUpperCase()}</span><span
-            style="color: red;margin-left: 0.05rem"
-          >
-            {guessedCharacter.toUpperCase()}
-          </span>
-        </span>
-      {:else}
-        {text.toUpperCase()}
-      {/if}
-    </p>
-
-    <div class="morse">
-      {#if !finished}
-        <span>
-          <Phrase phrase={currentWordTokensWithoutIncomplete} />
-          <span>
-            <Phrase
-              phrase={currentCharacterTokens.replaceAll("/", "")}
-              highlighted={true}
-            />
-          </span>
-        </span>
-      {:else}
-        <span>
-          <Phrase phrase={morseArray.map((m) => m.character).join("")} />
-        </span>
-      {/if}
-    </div>
-  </div>
-
-  <div class="controls">
-    {#if finished}
-      <button on:click={handleRestart} class="sans">{"Restart"}</button>
-    {:else}
-      <button on:click={handleClick} class="sans"
-        >{!playing ? "Start" : "Pause"}</button
-      >
-    {/if}
-    <div id="slider">
-      <span class="sans">fast</span>
-      <input
-        type="range"
-        min="0.01"
-        max="0.07"
-        step="0.03"
-        bind:value={speed}
-        style="width:80px;margin-left:1rem;margin-right:1rem;"
-      />
-      <span class="sans">slow</span>
-    </div>
-  </div>
-
-  <div class="footer">
-    <a href="https://github.com/AgricolaJKB/spiegel-morse" target="_blank"
-      >Source code</a
-    >
-    | Created by
-    <a href="https://twitter.com/_Jak_Bar" target="_blank">Jakob Bauer</a>
-    and
-    <a href="https://twitter.com/koenigsdorff_s" target="_blank"
-      >Simon Koenigsdorff</a
-    >
-  </div>
+  <Header />
+  <Content
+    {finished}
+    {visibleText}
+    {guessedCharacter}
+    {text}
+    {currentWordMorseTokensWithoutIncomplete}
+    {currentCharacterMorseTokens}
+    {morseArray}
+  />
+  <Controls {finished} {playing} {handleRestart} {handleStartStopClick} />
+  <Footer />
 </main>
 
 <style>
@@ -204,70 +112,5 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .title {
-    font-size: 1.6rem;
-    line-height: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0.75rem 0;
-  }
-  @media (max-width: 450px) {
-    .title {
-      font-size: 1.4rem;
-    }
-  }
-  .content {
-    margin: 3rem 0;
-    min-height: 40vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .output {
-    font-family: "Special Elite", "Cutive Mono", Courier;
-    margin: 0 auto;
-    margin-bottom: 1.5rem;
-  }
-  .morse {
-    min-height: 1.5rem;
-  }
-  p {
-    /* min-height: 1.2rem; */
-    max-width: 550px;
-    margin: 1rem 0;
-  }
-  .controls {
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-  }
-  .controls:first-child {
-    margin-right: 2rem;
-  }
-  #slider {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 2rem;
-  }
-  .footer {
-    margin-top: 8vh;
-    font-size: 8pt;
-    text-align: center;
-    text-transform: uppercase;
-    font-family: sans-serif;
-  }
-  .footer a {
-    color: inherit;
-  }
-  .footer a:hover {
-    color: inherit;
-    text-decoration: underline;
   }
 </style>

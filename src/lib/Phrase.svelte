@@ -1,6 +1,6 @@
 <script>
   import Character from "./Character.svelte";
-  import { encodeString } from "../../scripts/morse";
+  import { encodeString } from "../scripts/morse";
 
   export let style = "";
   export let highlighted = false;
